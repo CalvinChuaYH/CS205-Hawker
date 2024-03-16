@@ -8,9 +8,10 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/hawker_bg" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/hawker_bg"
+        android:contentDescription="@string/background_image" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,9 +26,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="50dp"
-            android:text="Hawker Havoc"
             android:shadowColor="#FFFFFF"
+            android:shadowDx="0"
+            android:shadowDy="0"
             android:shadowRadius="20"
+            android:text="@string/hawker_havoc"
             android:textAlignment="viewStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
@@ -36,12 +39,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="startGame"
-            android:text="Start game" />
+            android:text="@string/start_game" />
 
         <Button
             android:id="@+id/button4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Leaderboard" />
+            android:onClick="viewLeaderboard"
+            android:text="@string/leaderboard" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
