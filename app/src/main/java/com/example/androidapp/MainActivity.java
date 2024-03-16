@@ -22,6 +22,14 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         );
+        setContentView(R.layout.activity_title_screen);
+    }
+
+    public void startGame(View view) {
         setContentView(new Game(this));
+    }
+
+    public void viewScoreboard(View view) {
+//        setContentView(scoreboard.view());
     }
 }
