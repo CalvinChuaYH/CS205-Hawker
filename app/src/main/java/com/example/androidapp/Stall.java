@@ -12,6 +12,7 @@ public class Stall {
     public int height;
     private Paint paint;
 
+    //Initialize stall and where it is
     public Stall(Context context, int centerScreenX, int topScreenY) {
         this.centerX = centerScreenX;
         this.topY = topScreenY;
@@ -24,6 +25,7 @@ public class Stall {
         paint.setStyle(Paint.Style.FILL); // Set the style to fill
     }
 
+    //Drawing my stall
     public void draw(Canvas canvas) {
         // Draw the stall as a rectangle
         canvas.drawRect(centerX - (float) width / 2, topY, centerX + (float) width / 2, topY + height, paint);

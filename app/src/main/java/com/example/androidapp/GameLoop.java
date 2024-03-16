@@ -30,6 +30,7 @@ public class GameLoop extends Thread{
         return averageFPS;
     }
 
+    //Game loop is the thread to run the game
     @Override
     public void run() {
         super.run();

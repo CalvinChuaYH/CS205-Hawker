@@ -28,6 +28,8 @@ public class Player {
         int color = ContextCompat.getColor(context, R.color.player);
         paint.setColor(color);
     }
+
+    //Drawing my player canvas
     public void draw(Canvas canvas) {
         // Head
         canvas.drawCircle((float) positionX, (float) positionY, (float) radius, paint);
@@ -50,6 +52,7 @@ public class Player {
     }
 
 
+    //Handle when the player is moving
     public void update(Joystick joystick, int screenWidth, int screenHeight) {
         // Calculate the new position based on joystick input
         double newX = positionX + joystick.getActuatorX() * MAX_SPEED;
@@ -63,6 +66,7 @@ public class Player {
             positionY = newY;
         }
 
+        //Checks if colliding with stall, maybe can handle when person takes order here
         if(isCollidingWithStall()){
             positionX -= joystick.getActuatorX() * MAX_SPEED;
             positionY -= joystick.getActuatorY() * MAX_SPEED;
@@ -74,6 +78,7 @@ public class Player {
         this.positionY = positionY;
     }
 
+    //Checks if the user collides with the stall object
     public boolean isCollidingWithStall() {
         // Calculate the half-width and half-height of the stall
         int halfWidth = stall.width / 2;

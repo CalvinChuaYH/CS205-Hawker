@@ -19,6 +19,7 @@ public class Joystick {
     private double actuatorY;
 
     public Joystick(int centerPositionX, int centerPositionY, int outerCircleRadius, int innerCircleRadius){
+        //Initializing the radius as well as the x and y position of the joystick
         outerCircleCenterPosX = centerPositionX;
         outerCircleCenterPosY = centerPositionY;
         innerCircleCenterPosX = centerPositionX;
@@ -27,6 +28,7 @@ public class Joystick {
         this.outerCircleRadius = outerCircleRadius;
         this.innerCircleRadius = innerCircleRadius;
 
+        //Fill color for Outer/Inner Circle
         outerCirclePaint = new Paint();
         outerCirclePaint.setColor(Color.GRAY);
         outerCirclePaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -36,6 +38,7 @@ public class Joystick {
         innerCirclePaint.setStyle(Paint.Style.FILL_AND_STROKE);
     }
 
+    //This allows the inner circle to follow users touch, as user holds joystick
     public void update() {
         updateInnerCirclePosition();
     }
@@ -45,6 +48,7 @@ public class Joystick {
         innerCircleCenterPosY = (int) (outerCircleCenterPosY + actuatorY*outerCircleRadius);
     }
 
+    //Creating the inner/outer circle
     public void draw(Canvas canvas) {
         canvas.drawCircle(outerCircleCenterPosX, outerCircleCenterPosY,
             outerCircleRadius, outerCirclePaint);
@@ -53,6 +57,7 @@ public class Joystick {
                 innerCircleRadius, innerCirclePaint);
     }
 
+    //If the button is detected as pressed.
     public boolean isPressed(double x, double y) {
         joystickCenterToTouchDistance = Math.sqrt(
             Math.pow(outerCircleCenterPosX - x, 2) +
@@ -69,6 +74,9 @@ public class Joystick {
         return isPressed;
     }
 
+    //Sets the actuator direction based on the given point relative to the outer circle.
+    // * If the point is inside the outer circle, scales the direction based on the circle's radius.
+    // * Otherwise, sets a unit vector pointing towards the point. (Handle if user pulls inner circle too wide)
     public void setActuator(double x, double y) {
         double deltaX = x - outerCircleCenterPosX;
         double deltaY = y - outerCircleCenterPosY;
@@ -84,6 +92,7 @@ public class Joystick {
         }
     }
 
+    //When user lets go of inner circle.
     public void resetActuator() {
         actuatorX = 0.0;
         actuatorY = 0.0;

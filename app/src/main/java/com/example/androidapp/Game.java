@@ -43,6 +43,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
     }
 
+    //Handles the on Screen touch especially for joystick
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -81,6 +82,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
+    //Here you can come out with layout of the game etc items, person
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
@@ -91,6 +93,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         stall.draw(canvas);
     }
 
+    //Show the UPS in game screen
     public void drawUPS(Canvas canvas){
         String averageUPS = Double.toString(gameLoop.getAverageUPS());
         Paint paint = new Paint();
@@ -100,6 +103,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawText("UPS: " + averageUPS, 100, 100, paint);
     }
 
+    //Show the FPS in game screen
     public void drawFPS(Canvas canvas){
         String averageFPS = Double.toString(gameLoop.getAverageFPS());
         Paint paint = new Paint();
@@ -109,6 +113,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawText("FPS: " + averageFPS, 100, 200, paint);
     }
 
+    //Responsible to handle updates, when you move joystick and player movements of the game.
     public void update() {
         int screenWidth = ScreenUtils.getScreenWidth(getContext());
         int screenHeight = ScreenUtils.getScreenHeight(getContext());
