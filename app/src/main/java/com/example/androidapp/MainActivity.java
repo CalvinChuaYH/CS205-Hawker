@@ -10,8 +10,11 @@ import android.view.WindowManager;
 
 import com.example.androidapp.activity.GameActivity;
 import com.example.androidapp.activity.LeaderboardActivity;
+import com.example.androidapp.Firebase;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,10 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         );
         setContentView(R.layout.activity_title_screen);
+
+        firebase = new Firebase();
+        firebase.setScore("calvin", 10);
+        firebase.getScores();
     }
 
     public void startGame(View view) {
