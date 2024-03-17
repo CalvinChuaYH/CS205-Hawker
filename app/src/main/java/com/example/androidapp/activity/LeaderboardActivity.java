@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidapp.firebase.Firebase;
 import com.example.androidapp.R;
+import com.example.androidapp.firebase.FirebaseManager;
 
 public class LeaderboardActivity extends AppCompatActivity {
 
@@ -18,7 +19,9 @@ public class LeaderboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 
+        firebase = FirebaseManager.getInstance();
+
         score = (TextView) findViewById(R.id.score);
-        score.setText("test");
+        firebase.getScores(score);
     }
 }

@@ -2,6 +2,7 @@ package com.example.androidapp.firebase;
 
 import androidx.annotation.NonNull;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.firebase.FirebaseApp;
 
@@ -10,6 +11,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 public class Firebase {
 
@@ -28,18 +31,21 @@ public class Firebase {
         myRef.child(username).setValue(score); // Set the score under the username node
     }
 
-    public void getScores(){
+    public void getScores(final TextView textView){
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
+                    StringBuilder scoresBuilder = new StringBuilder();
                     for (DataSnapshot curSnapshot : snapshot.getChildren()) {
                         String username = curSnapshot.getKey(); // Get the username
-                        if (curSnapshot.getValue(Integer.class) == null){
-                            continue;
+                        Integer score = curSnapshot.getValue(Integer.class);
+                        if (username != null && score != null) {
+                            scoresBuilder.append(username).append(": ").append(score).append("\n");
                         }
-                        int score = curSnapshot.getValue(Integer.class); // Get the score
+
+                        textView.setText(scoresBuilder.toString());
                         Log.d("MainActivity", "Username: " + username + ", Score: " + score);
 
                         // Do something with the username and score, such as displaying them
