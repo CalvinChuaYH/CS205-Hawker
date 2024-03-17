@@ -10,11 +10,11 @@ import android.view.WindowManager;
 
 import com.example.androidapp.activity.GameActivity;
 import com.example.androidapp.activity.LeaderboardActivity;
-import com.example.androidapp.Firebase;
+import com.example.androidapp.firebase.Firebase;
+import com.example.androidapp.firebase.FirebaseManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +26,10 @@ public class MainActivity extends AppCompatActivity {
         );
         setContentView(R.layout.activity_title_screen);
 
-        firebase = new Firebase();
-        firebase.setScore("calvin", 10);
-        firebase.getScores();
+        Firebase firebase = FirebaseManager.getInstance();
     }
 
-    public void startGame(View view) {
+    public void startGame(View view)  {
         startActivity(new Intent(this, GameActivity.class));
     }
 
