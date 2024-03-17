@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
+    private long start;
     private final Player player;
     private GameLoop gameLoop;
     private Joystick joystick;
@@ -27,6 +28,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         surfaceHolder.addCallback(this);
 
         gameLoop = new GameLoop(this, surfaceHolder);
+        start = System.currentTimeMillis()/1000L;
 
         //initialize Objects
 
@@ -86,21 +88,21 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-//        drawUPS(canvas);
+        stopWatch(canvas);
 //        drawFPS(canvas);
         joystick.draw(canvas);
-        player.draw(canvas);
+        player.draw(canvas, joystick);
         stall.draw(canvas);
     }
 
     //Show the UPS in game screen
-    public void drawUPS(Canvas canvas){
-        String averageUPS = Double.toString(gameLoop.getAverageUPS());
+    public void stopWatch(Canvas canvas){
+        long currentTime = (System.currentTimeMillis()/1000L - start);
         Paint paint = new Paint();
         int color = ContextCompat.getColor(getContext(), R.color.magenta);
         paint.setColor(color);
         paint.setTextSize(50);
-        canvas.drawText("UPS: " + averageUPS, 100, 100, paint);
+        canvas.drawText((currentTime / 60) + " : " + (currentTime % 60) , 100, 100, paint);
     }
 
     //Show the FPS in game screen
