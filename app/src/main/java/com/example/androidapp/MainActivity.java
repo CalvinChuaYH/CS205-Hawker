@@ -10,7 +10,7 @@ import android.view.WindowManager;
 
 import com.example.androidapp.activity.GameActivity;
 import com.example.androidapp.activity.LeaderboardActivity;
-import com.example.androidapp.Firebase;
+import com.example.androidapp.firebase.Firebase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,15 +27,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_title_screen);
 
         firebase = new Firebase();
-        firebase.setScore("calvin", 10);
-        firebase.getScores();
     }
 
-    public void startGame(View view) {
+    public void startGame(View view)  {
         startActivity(new Intent(this, GameActivity.class));
     }
 
     public void viewLeaderboard(View view) {
-        startActivity(new Intent(this, LeaderboardActivity.class));
+        Intent intent = new Intent(this, LeaderboardActivity.class);
+        intent.putExtra("firebase", firebase);
+        startActivity(intent);
+//        startActivity(new Intent(this, LeaderboardActivity.class));
     }
 }

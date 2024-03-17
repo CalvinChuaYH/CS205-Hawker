@@ -1,4 +1,4 @@
-package com.example.androidapp;
+package com.example.androidapp.firebase;
 
 import androidx.annotation.NonNull;
 import android.util.Log;
