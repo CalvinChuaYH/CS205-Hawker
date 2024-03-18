@@ -36,4 +36,8 @@ public class MainActivity extends AppCompatActivity {
     public void viewLeaderboard(View view) {
         startActivity(new Intent(this, LeaderboardActivity.class));
     }
+
+    public void viewHome() {
+        setContentView(R.layout.activity_title_screen);
+    }
 }
