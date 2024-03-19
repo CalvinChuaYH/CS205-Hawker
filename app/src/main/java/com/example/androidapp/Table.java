@@ -10,12 +10,14 @@ public class Table {
     public int centerY; // Add centerY for the circle
     public int radius; // Add radius for the circle
     private Paint paint;
+    public int id;
 
     //Initialize stall and where it is
-    public Table(Context context, int X, int Y, int radius) {
+    public Table(Context context, int X, int Y, int radius, int id) {
         this.centerX = X;
         this.centerY = Y;
         this.radius = radius;
+        this.id = id;
 
         // Initialize paint for drawing the stall
         paint = new Paint();

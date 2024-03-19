@@ -3,23 +3,21 @@ package com.example.androidapp;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
 public class Player {
     private static final double SPEED_PIXELS_PER_SEC = 400.0;
-    private static final double MAX_SPEED = SPEED_PIXELS_PER_SEC/ GameLoop.MAX_UPS;
+    private static final double MAX_SPEED = SPEED_PIXELS_PER_SEC / GameLoop.MAX_UPS;
     private double positionX;
     private double positionY;
     private double radius;
     private Paint paint;
-    private double velocityX;
-    private double velocityY;
-
     private Stall stall;
     private Table[] tables;
 
-    public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables){
+    public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.radius = radius;
@@ -31,7 +29,7 @@ public class Player {
         paint.setColor(color);
     }
 
-    //Drawing my player canvas
+    // Drawing the player on canvas
     public void draw(Canvas canvas, Joystick joystick) {
         // Head
         canvas.drawCircle((float) positionX, (float) positionY, (float) radius, paint);
@@ -56,12 +54,23 @@ public class Player {
                 (float) (positionX + radius / 2), (float) (positionY + 5 * radius), paint);
     }
 
-
-    //Handle when the player is moving
+    // Handling player movement
     public void update(Joystick joystick, int screenWidth, int screenHeight) {
         // Calculate the new position based on joystick input
         double newX = positionX + joystick.getActuatorX() * MAX_SPEED;
         double newY = positionY + joystick.getActuatorY() * MAX_SPEED;
+
+        // Check if the new position is colliding with any table
+        for (Table table : tables) {
+            if (isCollidingWithTable(table)) {
+                Log.d("Player", "Collided with table: " + table.id);
+                // If colliding with a table, adjust the new position
+                double collisionAngle = Math.atan2(positionY - table.centerY, positionX - table.centerX);
+                newX = positionX + Math.cos(collisionAngle) * MAX_SPEED;
+                newY = positionY + Math.sin(collisionAngle) * MAX_SPEED;
+                break; // No need to check other tables once collision is detected
+            }
+        }
 
         // Keep the player within the screen bounds
         if (newX - radius >= 0 && newX + radius <= screenWidth) {
@@ -71,24 +80,14 @@ public class Player {
             positionY = newY;
         }
 
-        //Checks if colliding with stall, maybe can handle when person takes order here
-        if(isCollidingWithStall()){
-            positionX -= joystick.getActuatorX() * MAX_SPEED;
-            positionY -= joystick.getActuatorY() * MAX_SPEED;
-        }
-
-        if(isCollidingWithAnyTable()){
+        // Checks if colliding with stall
+        if (isCollidingWithStall()) {
             positionX -= joystick.getActuatorX() * MAX_SPEED;
             positionY -= joystick.getActuatorY() * MAX_SPEED;
         }
     }
 
-    public void setPosition(double positionX, double positionY) {
-        this.positionX = positionX;
-        this.positionY = positionY;
-    }
-
-    //Checks if the user collides with the stall object
+    // Method to check collision with the stall
     public boolean isCollidingWithStall() {
         // Calculate the half-width and half-height of the stall
         int halfWidth = stall.width / 2;
@@ -107,15 +106,7 @@ public class Player {
         return distance <= radius;
     }
 
-    public boolean isCollidingWithAnyTable() {
-        for (Table table : tables) {
-            if (isCollidingWithTable(table)) {
-                return true; // Return true if colliding with any table
-            }
-        }
-        return false; // Return false if not colliding with any table
-    }
-
+    // Method to check collision with a specific table
     public boolean isCollidingWithTable(Table table) {
         // Calculate the distance between the player's center and the table's center
         double distanceX = positionX - table.centerX;
