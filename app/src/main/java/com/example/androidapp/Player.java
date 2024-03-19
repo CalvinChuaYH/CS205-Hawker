@@ -17,12 +17,14 @@ public class Player {
     private double velocityY;
 
     private Stall stall;
+    private Table[] tables;
 
-    public Player(Context context, double positionX, double positionY, double radius, Stall stall){
+    public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables){
         this.positionX = positionX;
         this.positionY = positionY;
         this.radius = radius;
         this.stall = stall;
+        this.tables = tables;
 
         paint = new Paint();
         int color = ContextCompat.getColor(context, R.color.player);
@@ -74,6 +76,11 @@ public class Player {
             positionX -= joystick.getActuatorX() * MAX_SPEED;
             positionY -= joystick.getActuatorY() * MAX_SPEED;
         }
+
+        if(isCollidingWithAnyTable()){
+            positionX -= joystick.getActuatorX() * MAX_SPEED;
+            positionY -= joystick.getActuatorY() * MAX_SPEED;
+        }
     }
 
     public void setPosition(double positionX, double positionY) {
@@ -98,5 +105,24 @@ public class Player {
 
         // Check if the distance is less than or equal to the player's radius
         return distance <= radius;
+    }
+
+    public boolean isCollidingWithAnyTable() {
+        for (Table table : tables) {
+            if (isCollidingWithTable(table)) {
+                return true; // Return true if colliding with any table
+            }
+        }
+        return false; // Return false if not colliding with any table
+    }
+
+    public boolean isCollidingWithTable(Table table) {
+        // Calculate the distance between the player's center and the table's center
+        double distanceX = positionX - table.centerX;
+        double distanceY = positionY - table.centerY;
+        double distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+        // Check if the distance is less than or equal to the sum of player's radius and table's radius
+        return distance <= (radius + table.radius);
     }
 }
