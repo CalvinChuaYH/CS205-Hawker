@@ -20,6 +20,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     private Stall stall;
 
+    private Table[] tables;
+
     public Game(Context context) {
         super(context);
 
@@ -38,9 +40,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         int topScreenY = 0;
 
         // Place the stall at the top center of the screen
+        tables = new Table[]{
+                new Table(getContext(), 200, 200, 90, 1),
+                new Table(getContext(), 1200, 400, 90, 2),
+                new Table(getContext(), 600, 600, 90, 3)
+        };
         stall = new Stall(getContext(), centerScreenX, topScreenY);
         joystick = new Joystick(2000, 700,70,40);
-        player = new Player(getContext(), 500, 500, 30, stall);
+        player = new Player(getContext(), 500, 500, 30, stall, tables);
 
         setFocusable(true);
     }
@@ -89,13 +96,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         stopWatch(canvas);
-//        drawFPS(canvas);
+        for (Table table : tables) {
+            table.draw(canvas);
+        }
         joystick.draw(canvas);
         player.draw(canvas, joystick);
         stall.draw(canvas);
     }
 
-    //Show the UPS in game screen
+    //Show the Timer in game screen
     public void stopWatch(Canvas canvas){
         long currentTime = (System.currentTimeMillis()/1000L - start);
         Paint paint = new Paint();
@@ -103,16 +112,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         paint.setColor(color);
         paint.setTextSize(50);
         canvas.drawText((currentTime / 60) + " : " + (currentTime % 60) , 100, 100, paint);
-    }
-
-    //Show the FPS in game screen
-    public void drawFPS(Canvas canvas){
-        String averageFPS = Double.toString(gameLoop.getAverageFPS());
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(getContext(), R.color.magenta);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("FPS: " + averageFPS, 100, 200, paint);
     }
 
     //Responsible to handle updates, when you move joystick and player movements of the game.
