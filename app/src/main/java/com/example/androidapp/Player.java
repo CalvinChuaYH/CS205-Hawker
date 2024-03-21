@@ -64,6 +64,8 @@ public class Player {
         for (Table table : tables) {
             if (isCollidingWithTable(table)) {
                 Log.d("Player", "Collided with table: " + table.id);
+                int randomCustomer = (int) (Math.random() * 3);
+                Table.removeCustomerFromTable(table, randomCustomer);
                 // If colliding with a table, adjust the new position
                 double collisionAngle = Math.atan2(positionY - table.centerY, positionX - table.centerX);
                 newX = positionX + Math.cos(collisionAngle) * MAX_SPEED;
