@@ -12,6 +12,8 @@ public class Table {
     private Paint paint;
     public int id;
 
+    public Customer[] customers; // Array of customers
+
     //Initialize stall and where it is
     public Table(Context context, int X, int Y, int radius, int id) {
         this.centerX = X;
@@ -23,6 +25,15 @@ public class Table {
         paint = new Paint();
         paint.setColor(Color.WHITE); // Set the color of the stall to red
         paint.setStyle(Paint.Style.FILL); // Set the style to fill
+
+        customers = new Customer[3]; // Initialize the array for 3 customers
+        // Creating customer objects and placing them in seats
+        for (int i = 0; i < customers.length; i++) {
+            double angle = (2 * Math.PI / customers.length) * i; // Angle for each seat
+            int seatX = (int) (centerX + radius * Math.cos(angle)); // X-coordinate of the seat
+            int seatY = (int) (centerY + radius * Math.sin(angle)); // Y-coordinate of the seat
+            customers[i] = new Customer(seatX, seatY); // Create customer and assign position
+        }
     }
 
     //Drawing my stall
@@ -37,6 +48,13 @@ public class Table {
             int seatX = (int) (centerX + radius * Math.cos(angle)); // X-coordinate of the seat
             int seatY = (int) (centerY + radius * Math.sin(angle)); // Y-coordinate of the seat
             canvas.drawCircle(seatX, seatY, 20, paint); // Draw the seat as a small circle
+        }
+
+        // Draw customers sitting in the seats
+        for (Customer customer : customers) {
+            if (customer != null) {
+                customer.draw(canvas); // Draw each customer
+            }
         }
     }
 }

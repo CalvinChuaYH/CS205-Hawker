@@ -3,6 +3,7 @@ package com.example.androidapp;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -12,15 +13,17 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.androidapp.util.Order;
+import java.util.*;
+
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
     private final Player player;
     private GameLoop gameLoop;
     private Joystick joystick;
-
     private Stall stall;
-
     private Table[] tables;
+    private Timer orderTimer;
 
     public Game(Context context) {
         super(context);
@@ -50,6 +53,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         player = new Player(getContext(), 500, 500, 30, stall, tables);
 
         setFocusable(true);
+
+        startOrderGeneration();
     }
 
     //Handles the on Screen touch especially for joystick
@@ -102,6 +107,21 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         joystick.draw(canvas);
         player.draw(canvas, joystick);
         stall.draw(canvas);
+
+        // Display stall orders
+        Paint orderTextPaint = new Paint();
+        orderTextPaint.setColor(Color.GREEN);
+        orderTextPaint.setTextSize(50);
+
+        int orderDisplayX = 1000; // Adjust for position
+        int orderDisplayY = 200;
+
+        List<Order> currentOrders = stall.getOrders();
+
+        for (Order order : currentOrders) {
+            canvas.drawText(order.orderItem, orderDisplayX, orderDisplayY, orderTextPaint);
+            orderDisplayX += 100;
+        }
     }
 
     //Show the Timer in game screen
@@ -112,6 +132,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         paint.setColor(color);
         paint.setTextSize(50);
         canvas.drawText((currentTime / 60) + " : " + (currentTime % 60) , 100, 100, paint);
+    }
+
+    public void startOrderGeneration() {
+        orderTimer = new Timer();
+        orderTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Order order = new Order("🍔");
+                stall.placeOrder(order.orderItem); // Or randomize the order item
+            }
+        }, 5000, 5000); // Delay 5 seconds, repeat every 5 seconds
     }
 
     //Responsible to handle updates, when you move joystick and player movements of the game.

@@ -5,12 +5,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.example.androidapp.util.Order;
+import java.util.*;
+
 public class Stall {
     public int centerX;
     public int topY;
     public int width;
     public int height;
     private Paint paint;
+    private List<Order> orders = new ArrayList<>();
+
 
     //Initialize stall and where it is
     public Stall(Context context, int centerScreenX, int topScreenY) {
@@ -30,4 +35,13 @@ public class Stall {
         // Draw the stall as a rectangle
         canvas.drawRect(centerX - (float) width / 2, topY, centerX + (float) width / 2, topY + height, paint);
     }
+
+    public void placeOrder(String orderItem) {
+        orders.add(new Order(orderItem));
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
 }
