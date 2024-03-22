@@ -5,11 +5,15 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidapp.Game;
+import com.example.androidapp.GameLoop;
 
 public class GameActivity extends AppCompatActivity {
+
+    private GameLoop gameLoop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(new Game(this));
+        Game game = new Game(this);
+        setContentView(game);
     }
 }

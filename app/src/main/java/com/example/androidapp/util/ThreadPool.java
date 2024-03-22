@@ -22,6 +22,10 @@ public class ThreadPool implements AutoCloseable {
         return executorService.submit(task);
     }
 
+    public void execute(Runnable task) {
+        executorService.execute(task);
+    }
+
     @Override
     public void close() {
         executorService.shutdown();
