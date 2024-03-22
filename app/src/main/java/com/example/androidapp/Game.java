@@ -41,9 +41,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         // Place the stall at the top center of the screen
         tables = new Table[]{
-                new Table(getContext(), 200, 200, 90, 1),
-                new Table(getContext(), 1200, 400, 90, 2),
-                new Table(getContext(), 600, 600, 90, 3)
+                new Table(getContext(), 200, 400, 90, 1),
+                new Table(getContext(), 1500, 700, 90, 2),
+                new Table(getContext(), 800, 600, 90, 3)
         };
         stall = new Stall(getContext(), centerScreenX, topScreenY);
         joystick = new Joystick(2000, 700,70,40);
