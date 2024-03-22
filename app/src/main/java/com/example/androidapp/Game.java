@@ -12,6 +12,10 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.androidapp.gamelogic.Buffer;
+import com.example.androidapp.gamelogic.Chef;
+import com.example.androidapp.util.ThreadPool;
+
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
     private final Player player;
@@ -22,8 +26,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     private Table[] tables;
 
+    private ThreadPool threadPool;
+    private static final int THREAD_COUNT = 3;
+
+    private Chef chef;
+    Buffer buffer;
+
     public Game(Context context) {
         super(context);
+
+        // Initialize threadpool
+        this.threadPool = ThreadPool.getInstance(THREAD_COUNT);
+
+
 
         // Get surface holder and add callback
         SurfaceHolder surfaceHolder = getHolder();
@@ -31,6 +46,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         gameLoop = new GameLoop(this, surfaceHolder);
         start = System.currentTimeMillis()/1000L;
+
+        // Initialize chef thread
+        buffer = new Buffer(this);
+        this.chef = new Chef(buffer);
 
         //initialize Objects
 
@@ -78,7 +97,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        gameLoop.startLoop();
+
+//        Thread gameLoop = new Thread(this.gameLoop);
+        threadPool.execute(gameLoop);
+        threadPool.execute(chef);
+//        gameLoop.start();
     }
 
     @Override
@@ -102,6 +125,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         joystick.draw(canvas);
         player.draw(canvas, joystick);
         stall.draw(canvas);
+
+        if (buffer.isFoodReady()) { // Check if the buffer says food is ready
+            System.out.println("DRAWING FOOD NOW");
+        }
     }
 
     //Show the Timer in game screen

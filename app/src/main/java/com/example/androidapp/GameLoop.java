@@ -3,7 +3,7 @@ package com.example.androidapp;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-public class GameLoop extends Thread{
+public class GameLoop implements Runnable {
     public static final double MAX_UPS = 30.0;
     private static final double UPS_PERIOD = 1E+3/MAX_UPS;
     private boolean isRunning = false;
@@ -12,15 +12,16 @@ public class GameLoop extends Thread{
     private double averageUPS;
     private double averageFPS;
 
+
     public GameLoop(Game game, SurfaceHolder surfaceHolder) {
         this.game = game;
         this.surfaceHolder = surfaceHolder;
     }
 
-    public void startLoop() {
-        isRunning = true;
-        start();
-    }
+//    public void startLoop() {
+//        isRunning = true;
+//        start();
+//    }
 
     public double getAverageUPS() {
         return averageUPS;
@@ -33,7 +34,9 @@ public class GameLoop extends Thread{
     //Game loop is the thread to run the game
     @Override
     public void run() {
-        super.run();
+
+        isRunning = true;
+//        super.run();
 
         int updateCount = 0;
         int frameCount = 0;
@@ -70,7 +73,7 @@ public class GameLoop extends Thread{
             sleepTime = (long)(updateCount*UPS_PERIOD - elapsedTime);
             if(sleepTime > 0){
                 try {
-                    sleep(sleepTime);
+                    Thread.sleep(sleepTime);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
