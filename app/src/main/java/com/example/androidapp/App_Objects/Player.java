@@ -1,4 +1,4 @@
-package com.example.androidapp;
+package com.example.androidapp.App_Objects;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,7 +7,18 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.androidapp.GameLoop;
+import com.example.androidapp.Joystick;
+import com.example.androidapp.R;
+import com.example.androidapp.gamelogic.Buffer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
+
 public class Player {
+    public int served = 0;
     private static final double SPEED_PIXELS_PER_SEC = 400.0;
     private static final double MAX_SPEED = SPEED_PIXELS_PER_SEC / GameLoop.MAX_UPS;
     private double positionX;
@@ -17,12 +28,20 @@ public class Player {
     private Stall stall;
     private Table[] tables;
 
-    public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables) {
+    private Buffer buffer;
+
+    private boolean hasFood = false;
+
+    private HashMap<Integer, Stack<Integer>> map;
+
+    public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables, Buffer buffer) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.radius = radius;
         this.stall = stall;
         this.tables = tables;
+        this.buffer = buffer;
+        initPeopleDB();
 
         paint = new Paint();
         int color = ContextCompat.getColor(context, R.color.player);
@@ -60,17 +79,17 @@ public class Player {
         double newX = positionX + joystick.getActuatorX() * MAX_SPEED;
         double newY = positionY + joystick.getActuatorY() * MAX_SPEED;
 
-        // Check if the new position is colliding with any table
-        for (Table table : tables) {
-            if (isCollidingWithTable(table)) {
-                Log.d("Player", "Collided with table: " + table.id);
-                int randomCustomer = (int) (Math.random() * 3); //random customer to be gone
-                Table.removeCustomerFromTable(table, randomCustomer); //remove the customer
+        //Handles player disappearing logic
+        playerCustomerLogic();
+
+        //Handles Player colliding with table to "Bounce them back"
+        for(Table table:tables){
+            if(isCollidingWithTable(table)){
                 // If colliding with a table, adjust the new position
                 double collisionAngle = Math.atan2(positionY - table.centerY, positionX - table.centerX);
                 newX = positionX + Math.cos(collisionAngle) * MAX_SPEED;
                 newY = positionY + Math.sin(collisionAngle) * MAX_SPEED;
-                break; // No need to check other tables once collision is detected
+                break;
             }
         }
 
@@ -86,6 +105,29 @@ public class Player {
         if (isCollidingWithStall()) {
             positionX -= joystick.getActuatorX() * MAX_SPEED;
             positionY -= joystick.getActuatorY() * MAX_SPEED;
+            if (buffer.isFoodReady()) {
+                hasFood = true;
+                buffer.setTakenFood();
+            }
+        }
+
+        //If served 9 etc can stop game with this...
+        System.out.println(served);
+    }
+
+    private void playerCustomerLogic(){
+        // Check if the new position is colliding with any table
+        for (Table table : tables) {
+            if (isCollidingWithTable(table)) {
+                System.out.println(map.get(table.id));
+                if (hasFood && map.get(table.id).size() > 0) {
+                    int randomCustomerIndex = map.get(table.id).pop();
+                    served++;
+                    Table.removeCustomerFromTable(table, randomCustomerIndex); //remove the customer
+                    hasFood = false;
+                }
+                break; // No need to check other tables once collision is detected
+            }
         }
     }
 
@@ -117,5 +159,17 @@ public class Player {
 
         // Check if the distance is less than or equal to the sum of player's radius and table's radius
         return distance <= (radius + table.radius);
+    }
+
+    //Initializes the map for removal of customers, once all empty could end game etc.
+    public void initPeopleDB(){
+        map = new HashMap<>();
+        for(Table table:tables){
+            Stack<Integer> stack = new Stack<>();
+            stack.add(0);
+            stack.add(1);
+            stack.add(2);
+            map.put(table.id, stack);
+        }
     }
 }

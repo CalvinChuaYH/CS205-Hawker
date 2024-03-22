@@ -7,11 +7,14 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.androidapp.App_Objects.Food;
+import com.example.androidapp.App_Objects.Player;
+import com.example.androidapp.App_Objects.Stall;
+import com.example.androidapp.App_Objects.Table;
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
 import com.example.androidapp.util.ThreadPool;
@@ -23,6 +26,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private Joystick joystick;
 
     private Stall stall;
+    private Food food;
 
     private Table[] tables;
 
@@ -37,8 +41,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         // Initialize threadpool
         this.threadPool = ThreadPool.getInstance(THREAD_COUNT);
-
-
 
         // Get surface holder and add callback
         SurfaceHolder surfaceHolder = getHolder();
@@ -65,8 +67,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                 new Table(getContext(), 800, 600, 90, 3)
         };
         stall = new Stall(getContext(), centerScreenX, topScreenY);
+        food = new Food(getContext(), centerScreenX, topScreenY, 40);
         joystick = new Joystick(2000, 700,70,40);
-        player = new Player(getContext(), 500, 500, 30, stall, tables);
+        player = new Player(getContext(), 500, 500, 30, stall, tables, buffer);
 
         setFocusable(true);
     }
@@ -127,7 +130,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         stall.draw(canvas);
 
         if (buffer.isFoodReady()) { // Check if the buffer says food is ready
-            System.out.println("DRAWING FOOD NOW");
+            food.draw(canvas);
         }
     }
 
