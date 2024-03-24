@@ -28,7 +28,6 @@ public class CollisionHandler {
     }
 
     public void update(Joystick joystick, int screenWidth, int screenHeight) {
-        player.updateColor(player.getHasFood());
         double newX = player.positionX + joystick.getActuatorX() * player.MAX_SPEED;
         double newY = player.positionY + joystick.getActuatorY() * player.MAX_SPEED;
 

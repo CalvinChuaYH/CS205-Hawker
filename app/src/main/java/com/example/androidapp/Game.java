@@ -124,7 +124,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-
+        gameLoop.setRunning(false);
     }
 
     //Here you can come out with layout of the game etc items, person

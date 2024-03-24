@@ -20,7 +20,7 @@ public class Player {
     public double positionX;
     public double positionY;
     public double radius;
-    private Paint paint;
+    private final Paint paint = new Paint();
 
     private boolean hasFood = false;
     public int noFoodColor;
@@ -31,7 +31,6 @@ public class Player {
         this.positionY = positionY;
         this.radius = radius;
 
-        paint = new Paint();
         noFoodColor = ContextCompat.getColor(context, R.color.player);
         hasFoodColor = ContextCompat.getColor(context, R.color.magenta);
         paint.setColor(noFoodColor);
@@ -39,6 +38,7 @@ public class Player {
 
     public void setHasFood(boolean hasFood) {
         this.hasFood = hasFood;
+        paint.setColor(hasFood ? hasFoodColor : noFoodColor);
     }
 
     // Drawing the player on canvas
@@ -64,10 +64,6 @@ public class Player {
                 (float) (positionX - radius / 4), (float) (positionY + 5 * radius), paint);
         canvas.drawRect((float) (positionX + radius / 4), (float) (positionY + 3 * radius),
                 (float) (positionX + radius / 2), (float) (positionY + 5 * radius), paint);
-    }
-
-    public void updateColor(boolean hasFood) {
-        paint.setColor(hasFood ? hasFoodColor : noFoodColor);
     }
 
     public boolean getHasFood(){
