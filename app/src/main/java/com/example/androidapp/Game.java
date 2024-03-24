@@ -72,7 +72,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         stall = new Stall(getContext(), centerScreenX, topScreenY);
         food = new Food(getContext(), centerScreenX, topScreenY, 40);
         joystick = new Joystick(2000, 700,70,40);
-        player = new Player(getContext(), 500, 500, 30, stall, tables, buffer);
+        player = new Player(getContext(), 500, 500, 30, stall, tables, buffer, gameLoop);
 
         this.waiter = new Waiter(buffer, player);
         setFocusable(true);

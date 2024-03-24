@@ -31,6 +31,10 @@ public class GameLoop implements Runnable {
         return averageFPS;
     }
 
+    public void setRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+
     //Game loop is the thread to run the game
     @Override
     public void run() {

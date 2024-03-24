@@ -5,11 +5,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.androidapp.GameLoop;
 import com.example.androidapp.Joystick;
 import com.example.androidapp.R;
+import com.example.androidapp.firebase.Firebase;
+import com.example.androidapp.firebase.FirebaseManager;
 import com.example.androidapp.gamelogic.Buffer;
 
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-public class Player {
+public class Player extends AppCompatActivity {
     public int served = 0;
     private static final double SPEED_PIXELS_PER_SEC = 400.0;
     private static final double MAX_SPEED = SPEED_PIXELS_PER_SEC / GameLoop.MAX_UPS;
@@ -32,15 +35,18 @@ public class Player {
 
     private boolean hasFood = false;
 
+    private GameLoop gameloop;
+
     private HashMap<Integer, Stack<Integer>> map;
 
-    public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables, Buffer buffer) {
+    public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables, Buffer buffer, GameLoop gameloop) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.radius = radius;
         this.stall = stall;
         this.tables = tables;
         this.buffer = buffer;
+        this.gameloop = gameloop;
         initPeopleDB();
 
         paint = new Paint();
@@ -107,12 +113,16 @@ public class Player {
             positionY -= joystick.getActuatorY() * MAX_SPEED;
             if (buffer.isFoodReady()) {
                 hasFood = true;
-//                buffer.setTakenFood();
             }
         }
 
         //If served 9 etc can stop game with this...
-        System.out.println(served);
+        if (served == 2) {
+            Firebase firebase = FirebaseManager.getInstance();
+            firebase.setScore("test", 90);
+            setContentView(R.layout.activity_leaderboard);
+            gameloop.setRunning(false);
+        }
     }
 
     private void playerCustomerLogic(){
