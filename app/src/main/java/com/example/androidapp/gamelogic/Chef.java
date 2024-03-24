@@ -11,8 +11,6 @@ public class Chef implements Runnable {
     @Override
     public void run() {
 
-//        System.out.println("HELOOOOOOOOOOOOOOOOOOOOOO");
-
         while (true) {
             try {
                 // Simulate cooking time
