@@ -27,7 +27,7 @@ public class Buffer {
         }
 
         try {
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {}
 
         System.out.println("Chef prepared food");

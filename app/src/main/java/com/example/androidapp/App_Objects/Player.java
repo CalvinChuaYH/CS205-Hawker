@@ -107,7 +107,7 @@ public class Player {
             positionY -= joystick.getActuatorY() * MAX_SPEED;
             if (buffer.isFoodReady()) {
                 hasFood = true;
-                buffer.setTakenFood();
+//                buffer.setTakenFood();
             }
         }
 

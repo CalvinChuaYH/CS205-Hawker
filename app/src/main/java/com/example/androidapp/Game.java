@@ -17,6 +17,7 @@ import com.example.androidapp.App_Objects.Stall;
 import com.example.androidapp.App_Objects.Table;
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
+import com.example.androidapp.gamelogic.Waiter;
 import com.example.androidapp.util.ThreadPool;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
@@ -34,6 +35,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private static final int THREAD_COUNT = 3;
 
     private Chef chef;
+    private Waiter waiter;
     Buffer buffer;
 
     public Game(Context context) {
@@ -53,6 +55,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         buffer = new Buffer(this);
         this.chef = new Chef(buffer);
 
+
         //initialize Objects
 
         // Calculate center of the screen
@@ -71,6 +74,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         joystick = new Joystick(2000, 700,70,40);
         player = new Player(getContext(), 500, 500, 30, stall, tables, buffer);
 
+        this.waiter = new Waiter(buffer, player);
         setFocusable(true);
     }
 
@@ -104,6 +108,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //        Thread gameLoop = new Thread(this.gameLoop);
         threadPool.execute(gameLoop);
         threadPool.execute(chef);
+        threadPool.execute(waiter);
 //        gameLoop.start();
     }
 
