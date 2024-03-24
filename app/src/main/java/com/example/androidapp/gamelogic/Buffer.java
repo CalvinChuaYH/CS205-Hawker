@@ -26,6 +26,10 @@ public class Buffer {
             } catch (InterruptedException e) {}
         }
 
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {}
+
         System.out.println("Chef prepared food");
         isFull = true;
         notifyAll();
@@ -43,7 +47,7 @@ public class Buffer {
         notifyAll();
     }
 
-    public synchronized boolean isFoodReady() {
+    public boolean isFoodReady() {
         return isFull;
     }
 
