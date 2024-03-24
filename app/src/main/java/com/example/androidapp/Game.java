@@ -24,13 +24,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
     private GameLoop gameLoop;
     private Joystick joystick;
+
     private Stall stall;
+
     private Table[] tables;
+
     private ThreadPool threadPool;
     private static final int THREAD_COUNT = 3;
+
     private Chef chef;
     Buffer buffer;
     private Paint orderTextPaint;
+
 
     public Game(Context context) {
         super(context);
@@ -47,12 +52,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         gameLoop = new GameLoop(this, surfaceHolder);
         start = System.currentTimeMillis()/1000L;
 
-        buffer = new Buffer(this, 10); // Example capacity of 5 orders
+        // Initialize chef thread
+        buffer = new Buffer(this, 10);
 
         // Initialize paint for the text
         orderTextPaint = new Paint();
         orderTextPaint.setColor(Color.GREEN);
         orderTextPaint.setTextSize(40);
+
         this.chef = new Chef(buffer);
 
         //initialize Objects
@@ -135,7 +142,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         displayOrders(canvas);
-
     }
 
     public void displayOrders(Canvas canvas) {
