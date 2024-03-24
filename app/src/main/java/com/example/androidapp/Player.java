@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.androidapp.gamelogic.Buffer;
+
 public class Player {
     private static final double SPEED_PIXELS_PER_SEC = 400.0;
     private static final double MAX_SPEED = SPEED_PIXELS_PER_SEC / GameLoop.MAX_UPS;
@@ -16,6 +18,7 @@ public class Player {
     private Paint paint;
     private Stall stall;
     private Table[] tables;
+
 
     public Player(Context context, double positionX, double positionY, double radius, Stall stall, Table[] tables) {
         this.positionX = positionX;

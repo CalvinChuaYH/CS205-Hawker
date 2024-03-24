@@ -16,8 +16,8 @@ public class Chef implements Runnable {
         while (true) {
             try {
                 // Simulate cooking time
-                Thread.sleep(5000);
-                buffer.putFood();
+                Thread.sleep(2000);
+                buffer.putOrder(new Order("🍔"));
 
             } catch (InterruptedException e) {
             }

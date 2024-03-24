@@ -14,23 +14,23 @@ import androidx.core.content.ContextCompat;
 
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
+import com.example.androidapp.gamelogic.Order;
 import com.example.androidapp.util.ThreadPool;
+import android.graphics.Color;
+
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
     private final Player player;
     private GameLoop gameLoop;
     private Joystick joystick;
-
     private Stall stall;
-
     private Table[] tables;
-
     private ThreadPool threadPool;
     private static final int THREAD_COUNT = 3;
-
     private Chef chef;
     Buffer buffer;
+    private Paint orderTextPaint;
 
     public Game(Context context) {
         super(context);
@@ -47,8 +47,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         gameLoop = new GameLoop(this, surfaceHolder);
         start = System.currentTimeMillis()/1000L;
 
-        // Initialize chef thread
-        buffer = new Buffer(this);
+        buffer = new Buffer(this, 10); // Example capacity of 5 orders
+
+        // Initialize paint for the text
+        orderTextPaint = new Paint();
+        orderTextPaint.setColor(Color.GREEN);
+        orderTextPaint.setTextSize(40);
         this.chef = new Chef(buffer);
 
         //initialize Objects
@@ -128,6 +132,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         if (buffer.isFoodReady()) { // Check if the buffer says food is ready
             System.out.println("DRAWING FOOD NOW");
+        }
+
+        displayOrders(canvas);
+
+    }
+
+    public void displayOrders(Canvas canvas) {
+        int x = 1000; // Example: Right side of the screen
+        int y = 200;
+
+        for (Order order : buffer.getOrders()) {
+            String text = order.orderItem;
+            canvas.drawText(text, x, y, orderTextPaint);
+            x += 50; // Space out the orders
         }
     }
 

@@ -8,7 +8,7 @@ public class Waiter implements Runnable {
     public void run() {
         while (true) {
             try {
-                buffer.takeFood();
+                buffer.takeOrder();
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
