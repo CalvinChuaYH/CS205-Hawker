@@ -1,11 +1,13 @@
 package com.example.androidapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.androidapp.MainActivity;
 import com.example.androidapp.firebase.Firebase;
 import com.example.androidapp.R;
 import com.example.androidapp.firebase.FirebaseManager;
@@ -23,6 +25,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     }
 
     public void viewHome(View view) {
-        getOnBackPressedDispatcher().onBackPressed();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }

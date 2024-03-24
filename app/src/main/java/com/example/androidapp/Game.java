@@ -2,6 +2,7 @@ package com.example.androidapp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
@@ -17,12 +18,15 @@ import com.example.androidapp.App_Objects.Food;
 import com.example.androidapp.App_Objects.Player;
 import com.example.androidapp.App_Objects.Stall;
 import com.example.androidapp.App_Objects.Table;
+import com.example.androidapp.activity.LeaderboardActivity;
 import com.example.androidapp.firebase.Firebase;
 import com.example.androidapp.firebase.FirebaseManager;
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
 import com.example.androidapp.gamelogic.Waiter;
 import com.example.androidapp.util.ThreadPool;
+
+import java.util.Locale;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
@@ -45,8 +49,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private Waiter waiter;
     Buffer buffer;
 
-    public Game(Context context, AppCompatActivity activity) {
-        super(context);
+    public Game(AppCompatActivity activity) {
+        super(activity);
         this.activity = activity;
         // Initialize threadpool
         this.threadPool = ThreadPool.getInstance(THREAD_COUNT);
@@ -59,30 +63,30 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         start = System.currentTimeMillis()/1000L;
 
         // Initialize chef thread
-        buffer = new Buffer(this);
+        buffer = new Buffer();
         this.chef = new Chef(buffer);
 
 
         //initialize Objects
 
         // Calculate center of the screen
-        int screenWidth = ScreenUtils.getScreenWidth(getContext());
+        int screenWidth = ScreenUtils.getScreenWidth(activity);
         int centerScreenX = screenWidth / 2;
         int topScreenY = 0;
 
         // Place the stall at the top center of the screen
         tables = new Table[]{
-                new Table(getContext(), 200, 400, 90, 1),
-                new Table(getContext(), 1500, 700, 90, 2),
-                new Table(getContext(), 800, 600, 90, 3)
+                new Table(200, 400, 90, 1),
+                new Table(1500, 700, 90, 2),
+                new Table(800, 600, 90, 3)
         };
-        stall = new Stall(getContext(), centerScreenX, topScreenY);
-        food = new Food(getContext(), centerScreenX, topScreenY, 40);
+        stall = new Stall(centerScreenX, topScreenY, buffer);
+        food = new Food(centerScreenX, topScreenY, 40);
         joystick = new Joystick(2000, 700,70,40);
-        player = new Player(getContext(), 500, 500, 30);
-        collisionHandler = new CollisionHandler(player, stall, tables, buffer);
+        player = new Player(activity, 500, 500, 30);
+        collisionHandler = new CollisionHandler(player, stall, tables);
 
-        this.waiter = new Waiter(buffer, collisionHandler);
+        this.waiter = new Waiter(player, stall);
         setFocusable(true);
     }
 
@@ -151,7 +155,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         int color = ContextCompat.getColor(getContext(), R.color.magenta);
         paint.setColor(color);
         paint.setTextSize(50);
-        canvas.drawText((currentTime / 60) + " : " + (currentTime % 60) , 100, 100, paint);
+        canvas.drawText(String.format(Locale.ENGLISH, "%d:%02d", (currentTime / 60), (currentTime % 60)), 100, 100, paint);
     }
 
     //Responsible to handle updates, when you move joystick and player movements of the game.
@@ -168,8 +172,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         if (collisionHandler.allCustomerServed()) {
             Firebase firebase = FirebaseManager.getInstance();
             firebase.setScore("test", (int) currentTime);
-            activity.setContentView(R.layout.activity_leaderboard);
             gameLoop.setRunning(false);
+            activity.startActivity(new Intent(getContext(), LeaderboardActivity.class));
+            activity.finish();
         }
     }
 }

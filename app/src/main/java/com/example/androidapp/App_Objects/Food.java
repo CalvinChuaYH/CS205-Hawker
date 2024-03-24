@@ -12,7 +12,7 @@ public class Food {
 
     private double radius;
 
-    public Food(Context context, double centerScreenX, double topScreenY, double radius) {
+    public Food(double centerScreenX, double topScreenY, double radius) {
         this.centerScreenX = centerScreenX;
         this.topScreenY = topScreenY;
         this.radius = radius;

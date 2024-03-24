@@ -1,16 +1,16 @@
 package com.example.androidapp.gamelogic;
 
-import com.example.androidapp.App_Objects.CollisionHandler;
 import com.example.androidapp.App_Objects.Player;
+import com.example.androidapp.App_Objects.Stall;
 
 public class Waiter implements Runnable {
 
-    private Buffer buffer;
-    private CollisionHandler collisionHandler;
+    private Player player;
+    private Stall stall;
 
-    public Waiter (Buffer buffer, CollisionHandler collisionHandler) {
-        this.buffer = buffer;
-        this.collisionHandler = collisionHandler;
+    public Waiter (Player player, Stall stall) {
+        this.player = player;
+        this.stall = stall;
     }
 
     @Override
@@ -18,9 +18,8 @@ public class Waiter implements Runnable {
         while (true) {
 
             // If colliding with stall
-            if (collisionHandler.isCollidingWithStall()) {
-                buffer.takeFood();
-            }
+//            if (stall.handleCollide(player, null)) {
+//            }
         }
     }
 }

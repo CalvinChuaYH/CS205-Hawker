@@ -10,13 +10,6 @@ import com.example.androidapp.Game;
 import com.example.androidapp.R;
 
 public class Buffer {
-
-    private Game game;
-
-    public Buffer(Game game) {
-        this.game = game;
-    }
-
     private boolean isFull = false;
 
     public synchronized void putFood() {
