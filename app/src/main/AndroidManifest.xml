@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.LeaderboardActivity" android:screenOrientation="landscape"/>
-        <activity android:name=".activity.GameActivity"/>
+        <activity android:name=".activity.GameActivity" android:screenOrientation="landscape"/>
     </application>
 
 </manifest>
