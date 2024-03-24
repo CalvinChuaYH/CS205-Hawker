@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class Player {
-    public int served = 0;
     public final double SPEED_PIXELS_PER_SEC = 400.0;
     public final double MAX_SPEED = SPEED_PIXELS_PER_SEC / GameLoop.MAX_UPS;
     public double positionX;
@@ -24,9 +23,6 @@ public class Player {
     private Paint paint;
 
     private boolean hasFood = false;
-
-    private HashMap<Integer, Stack<Integer>> map;
-
     public int noFoodColor;
     public int hasFoodColor;
 
@@ -38,11 +34,11 @@ public class Player {
         paint = new Paint();
         noFoodColor = ContextCompat.getColor(context, R.color.player);
         hasFoodColor = ContextCompat.getColor(context, R.color.magenta);
-        setColor(hasFood,noFoodColor,hasFoodColor);
+        paint.setColor(noFoodColor);
     }
 
-    public void setColor(boolean hasFood, int noFoodColor, int hasFoodColor) {
-        paint.setColor(hasFood ? hasFoodColor:noFoodColor);
+    public void setHasFood(boolean hasFood) {
+        this.hasFood = hasFood;
     }
 
     // Drawing the player on canvas
@@ -69,4 +65,13 @@ public class Player {
         canvas.drawRect((float) (positionX + radius / 4), (float) (positionY + 3 * radius),
                 (float) (positionX + radius / 2), (float) (positionY + 5 * radius), paint);
     }
+
+    public void updateColor(boolean hasFood) {
+        paint.setColor(hasFood ? hasFoodColor : noFoodColor);
+    }
+
+    public boolean getHasFood(){
+        return hasFood;
+    }
+
 }

@@ -10,7 +10,6 @@ import java.util.Stack;
 
 public class CollisionHandler {
     public int served = 0;
-    private boolean hasFood = false;
     private HashMap<Integer, Stack<Integer>> map;
     private Player player;
     private Stall stall;
@@ -29,6 +28,7 @@ public class CollisionHandler {
     }
 
     public void update(Joystick joystick, int screenWidth, int screenHeight) {
+        player.updateColor(player.getHasFood());
         double newX = player.positionX + joystick.getActuatorX() * player.MAX_SPEED;
         double newY = player.positionY + joystick.getActuatorY() * player.MAX_SPEED;
 
@@ -59,8 +59,7 @@ public class CollisionHandler {
             player.positionX -= joystick.getActuatorX() * player.MAX_SPEED;
             player.positionY -= joystick.getActuatorY() * player.MAX_SPEED;
             if (buffer.isFoodReady()) {
-                hasFood = true;
-                player.setColor(hasFood, player.noFoodColor, player.hasFoodColor);
+                player.setHasFood(true);
             }
         }
     }
@@ -70,12 +69,11 @@ public class CollisionHandler {
         for (Table table : tables) {
             if (isCollidingWithTable(table)) {
                 System.out.println(map.get(table.id));
-                if (hasFood && map.get(table.id).size() > 0) {
+                if (player.getHasFood() && map.get(table.id).size() > 0) {
                     int randomCustomerIndex = map.get(table.id).pop();
                     served++;
                     Table.removeCustomerFromTable(table, randomCustomerIndex); //remove the customer
-                    hasFood = false;
-                    player.setColor(hasFood, player.noFoodColor, player.hasFoodColor);
+                    player.setHasFood(false);
                 }
                 break; // No need to check other tables once collision is detected
             }
