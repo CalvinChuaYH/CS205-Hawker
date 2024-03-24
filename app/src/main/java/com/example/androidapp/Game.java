@@ -9,12 +9,16 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.androidapp.App_Objects.CollisionHandler;
 import com.example.androidapp.App_Objects.Food;
 import com.example.androidapp.App_Objects.Player;
 import com.example.androidapp.App_Objects.Stall;
 import com.example.androidapp.App_Objects.Table;
+import com.example.androidapp.firebase.Firebase;
+import com.example.androidapp.firebase.FirebaseManager;
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
 import com.example.androidapp.gamelogic.Waiter;
@@ -22,6 +26,9 @@ import com.example.androidapp.util.ThreadPool;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
+    private long currentTime;
+    private AppCompatActivity activity;
+    private CollisionHandler collisionHandler;
     private final Player player;
     private GameLoop gameLoop;
     private Joystick joystick;
@@ -38,9 +45,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private Waiter waiter;
     Buffer buffer;
 
-    public Game(Context context) {
+    public Game(Context context, AppCompatActivity activity) {
         super(context);
-
+        this.activity = activity;
         // Initialize threadpool
         this.threadPool = ThreadPool.getInstance(THREAD_COUNT);
 
@@ -72,9 +79,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         stall = new Stall(getContext(), centerScreenX, topScreenY);
         food = new Food(getContext(), centerScreenX, topScreenY, 40);
         joystick = new Joystick(2000, 700,70,40);
-        player = new Player(getContext(), 500, 500, 30, stall, tables, buffer, gameLoop);
+        player = new Player(getContext(), 500, 500, 30);
+        collisionHandler = new CollisionHandler(player, stall, tables, buffer);
 
-        this.waiter = new Waiter(buffer, player);
+        this.waiter = new Waiter(buffer, collisionHandler);
         setFocusable(true);
     }
 
@@ -104,12 +112,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-
-//        Thread gameLoop = new Thread(this.gameLoop);
         threadPool.execute(gameLoop);
         threadPool.execute(chef);
         threadPool.execute(waiter);
-//        gameLoop.start();
     }
 
     @Override
@@ -131,7 +136,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
             table.draw(canvas);
         }
         joystick.draw(canvas);
-        player.draw(canvas, joystick);
+        collisionHandler.draw(canvas, joystick);
         stall.draw(canvas);
 
         if (buffer.isFoodReady()) { // Check if the buffer says food is ready
@@ -141,7 +146,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     //Show the Timer in game screen
     public void stopWatch(Canvas canvas){
-        long currentTime = (System.currentTimeMillis()/1000L - start);
+        currentTime = (System.currentTimeMillis()/1000L - start);
         Paint paint = new Paint();
         int color = ContextCompat.getColor(getContext(), R.color.magenta);
         paint.setColor(color);
@@ -154,6 +159,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         int screenWidth = ScreenUtils.getScreenWidth(getContext());
         int screenHeight = ScreenUtils.getScreenHeight(getContext());
         joystick.update();
-        player.update(joystick, screenWidth, screenHeight);
+        collisionHandler.update(joystick, screenWidth, screenHeight);
+        checkStopGame();
+    }
+
+    public void checkStopGame(){
+        //If served 9 etc can stop game with this...
+        if (collisionHandler.allCustomerServed()) {
+            Firebase firebase = FirebaseManager.getInstance();
+            firebase.setScore("test", (int) currentTime);
+            activity.setContentView(R.layout.activity_leaderboard);
+            gameLoop.setRunning(false);
+        }
     }
 }
