@@ -10,8 +10,6 @@ import android.view.WindowManager;
 
 import com.example.androidapp.activity.GameActivity;
 import com.example.androidapp.activity.LeaderboardActivity;
-import com.example.androidapp.firebase.Firebase;
-import com.example.androidapp.firebase.FirebaseManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         );
         setContentView(R.layout.activity_title_screen);
-
-        Firebase firebase = FirebaseManager.getInstance();
     }
 
     public void startGame(View view)  {
@@ -35,9 +31,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewLeaderboard(View view) {
         startActivity(new Intent(this, LeaderboardActivity.class));
-    }
-
-    public void viewHome() {
-        setContentView(R.layout.activity_title_screen);
     }
 }
