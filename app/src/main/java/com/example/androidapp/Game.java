@@ -1,12 +1,18 @@
 package com.example.androidapp;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +23,7 @@ import com.example.androidapp.App_Objects.Food;
 import com.example.androidapp.App_Objects.Player;
 import com.example.androidapp.App_Objects.Stall;
 import com.example.androidapp.App_Objects.Table;
+import com.example.androidapp.activity.LeaderboardActivity;
 import com.example.androidapp.firebase.Firebase;
 import com.example.androidapp.firebase.FirebaseManager;
 import com.example.androidapp.gamelogic.Buffer;
@@ -166,10 +173,49 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void checkStopGame(){
         //If served 9 etc can stop game with this...
         if (collisionHandler.allCustomerServed()) {
-            Firebase firebase = FirebaseManager.getInstance();
-            firebase.setScore("test", (int) currentTime);
-            activity.setContentView(R.layout.activity_leaderboard);
-            gameLoop.setRunning(false);
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    gameLoop.setRunning(false);
+                    showGameOverDialog();
+                }
+            });
         }
+    }
+
+    private void showGameOverDialog() {
+        // Inflate the custom layout for the dialog
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.gameover, null);
+        final EditText playerNameInput = dialogView.findViewById(R.id.playerNameInput);
+
+        // Build and show the dialog
+        new AlertDialog.Builder(activity)
+                .setTitle("Game Over")
+                .setView(dialogView)
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Retrieve the input name and update the leaderboard
+                        String playerName = playerNameInput.getText().toString();
+                        updateLeaderboard(playerName);
+
+                        // Optionally, navigate to the leaderboard screen
+                        navigateToLeaderboard();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void updateLeaderboard(String playerName) {
+        Firebase firebase = FirebaseManager.getInstance();
+        firebase.setScore(playerName, (int) currentTime);
+    }
+
+    private void navigateToLeaderboard() {
+        // Transition to the leaderboard activity
+        Intent intent = new Intent(getContext(), LeaderboardActivity.class);
+        getContext().startActivity(intent);
     }
 }
