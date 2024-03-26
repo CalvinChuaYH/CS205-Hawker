@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.androidapp.gamelogic.Score;
 import com.google.firebase.FirebaseApp;
 
 import com.google.firebase.database.DataSnapshot;
@@ -13,6 +14,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
+
+import java.util.*;
 
 public class Firebase {
 
@@ -37,20 +40,39 @@ public class Firebase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    StringBuilder scoresBuilder = new StringBuilder();
+                    List<Score> allScores = new ArrayList<>(); // Use a List to store scores
+
                     for (DataSnapshot curSnapshot : snapshot.getChildren()) {
                         String username = curSnapshot.getKey(); // Get the username
                         Integer score = curSnapshot.getValue(Integer.class);
+
                         if (username != null && score != null) {
-                            scoresBuilder.append(username).append(": ").append(score).append("\n");
+                            allScores.add(new Score(username, score)); // Create Score objects
+                        }
+
+                        // Sort the scores in ascending order
+                        allScores.sort(Comparator.comparingInt(Score::getValue));
+
+                        // Get the top 3 (or less if fewer than 3 exist)
+                        int topCount = Math.min(allScores.size(), 3);
+                        StringBuilder scoresBuilder = new StringBuilder();
+                        for (int i = 0; i < topCount; i++) {
+                            Score currentScore = allScores.get(i);
+                            scoresBuilder.append(currentScore.getUsername())
+                                    .append(": ")
+                                    .append(currentScore.getValue())
+                                    .append("\n");
                         }
 
                         textView.setText(scoresBuilder.toString());
+
                         Log.d("MainActivity", "Username: " + username + ", Score: " + score);
 
                         // Do something with the username and score, such as displaying them
                         Log.d("MainActivity", "Username: " + username + ", Score: " + score);
                     }
+
+
                 }
             }
 
@@ -60,6 +82,4 @@ public class Firebase {
             }
         });
     }
-
-
 }
