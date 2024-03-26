@@ -22,11 +22,6 @@ public class Stall {
         this.centerX = centerScreenX;
         this.topY = topScreenY;
 
-        // Initialize paint for drawing the stall
-        paint = new Paint();
-        paint.setColor(Color.RED); // Set the color of the stall to red
-        paint.setStyle(Paint.Style.FILL); // Set the style to fill
-
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 8;
         image = BitmapFactory.decodeResource(context.getResources(), R.drawable.table, options);
@@ -37,8 +32,6 @@ public class Stall {
 
     //Drawing my stall
     public void draw(Canvas canvas) {
-        // Draw the stall as a rectangle
-        //canvas.drawRect(centerX - (float) width / 2, topY, centerX + (float) width / 2, topY + height, paint);
         canvas.drawBitmap(image, centerX - (float) image.getWidth() / 2, topY, null);
     }
 }
