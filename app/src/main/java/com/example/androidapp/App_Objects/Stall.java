@@ -30,7 +30,7 @@ public class Stall {
         stallImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.stall, options);
 
         this.width = image.getWidth(); // Set the width of the stall
-        this.height = image.getHeight() - 100; // Set the height of the stall
+        this.height = image.getHeight(); // Set the height of the stall
         paint = new Paint();
         paint.setColor(Color.WHITE); // Text color
         paint.setTextSize(50); // Text size

@@ -42,7 +42,7 @@ public class Player {
         this.radius = radius;
 
         noFoodColor = ContextCompat.getColor(context, R.color.player);
-        hasFoodColor = ContextCompat.getColor(context, R.color.magenta);
+        hasFoodColor = ContextCompat.getColor(context, R.color.green);
         paint.setColor(noFoodColor);
 
 //        BitmapFactory.Options options = new BitmapFactory.Options();
