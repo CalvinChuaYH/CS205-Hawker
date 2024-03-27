@@ -1,13 +1,19 @@
 package com.example.androidapp;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +37,7 @@ import java.util.Locale;
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
     private long currentTime;
+    private long pauseTime;
     private AppCompatActivity activity;
     private CollisionHandler collisionHandler;
     private final Player player;
@@ -128,7 +135,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        // Stop the game loop and associated threads
         gameLoop.setRunning(false);
+        threadPool.close(); // Properly shut down the thread pool
     }
 
     //Here you can come out with layout of the game etc items, person
@@ -170,11 +179,50 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void checkStopGame(){
         //If served 9 etc can stop game with this...
         if (collisionHandler.allCustomerServed()) {
-            Firebase firebase = FirebaseManager.getInstance();
-            firebase.setScore("test", (int) currentTime);
-            gameLoop.setRunning(false);
-            activity.startActivity(new Intent(getContext(), LeaderboardActivity.class));
-            activity.finish();
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    gameLoop.setRunning(false);
+                    pauseTime = currentTime;
+                    showGameOverDialog();
+                }
+            });
         }
+    }
+
+    private void showGameOverDialog() {
+        // Inflate the custom layout for the dialog
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.gameover, null);
+        final EditText playerNameInput = dialogView.findViewById(R.id.playerNameInput);
+
+        // Build and show the dialog
+        new AlertDialog.Builder(activity)
+                .setTitle("Game Over")
+                .setView(dialogView)
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Retrieve the input name and update the leaderboard
+                        String playerName = playerNameInput.getText().toString();
+                        updateLeaderboard(playerName);
+
+                        // Optionally, navigate to the leaderboard screen
+                        navigateToLeaderboard();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void updateLeaderboard(String playerName) {
+        Firebase firebase = FirebaseManager.getInstance();
+        firebase.setScore(playerName, (int) pauseTime);
+    }
+
+    private void navigateToLeaderboard() {
+        // Transition to the leaderboard activity
+        Intent intent = new Intent(getContext(), LeaderboardActivity.class);
+        getContext().startActivity(intent);
     }
 }

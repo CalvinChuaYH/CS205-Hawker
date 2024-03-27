@@ -43,11 +43,4 @@ public class Buffer {
     public boolean isFoodReady() {
         return isFull;
     }
-
-    public synchronized void setTakenFood(){
-        if(isFull){
-            isFull = false;
-        }
-        notifyAll();
-    }
 }
