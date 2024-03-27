@@ -84,7 +84,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                 new Table(getContext(), 800, 600, 90, 3)
         };
         stall = new Stall(getContext(), centerScreenX, topScreenY);
-        food = new Food(getContext(), centerScreenX, topScreenY, 40);
+        food = new Food(getContext(), centerScreenX, topScreenY);
         joystick = new Joystick(2000, 700,70,40);
         player = new Player(getContext(), 500, 500, 30);
         collisionHandler = new CollisionHandler(player, stall, tables, buffer);
