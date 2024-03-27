@@ -23,8 +23,8 @@ public class CollisionHandler {
         initPeopleDB();
     }
 
-    public void draw(Canvas canvas){
-        player.draw(canvas);
+    public void draw(Canvas canvas, Joystick joystick){
+        player.draw(canvas, joystick);
     }
 
     public void update(Joystick joystick, int screenWidth, int screenHeight) {
