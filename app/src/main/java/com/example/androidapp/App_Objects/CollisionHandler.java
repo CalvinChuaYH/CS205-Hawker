@@ -15,8 +15,8 @@ public class CollisionHandler {
         blocks.addAll(Arrays.asList(tables));
     }
 
-    public void draw(Canvas canvas, Joystick joystick){
-        player.draw(canvas, joystick);
+    public void draw(Canvas canvas){
+        player.draw(canvas);
     }
 
     public void update(Joystick joystick, int screenWidth, int screenHeight) {

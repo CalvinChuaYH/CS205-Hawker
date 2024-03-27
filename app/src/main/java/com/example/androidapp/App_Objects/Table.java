@@ -12,7 +12,7 @@ public class Table implements Roadblock {
     public int centerX;
     public int centerY; // Add centerY for the circle
     public int radius; // Add radius for the circle
-    private Paint paint;
+    private final Paint paint = new Paint();
     public int id;
 
     public ArrayList<Customer> customers; // Array of customers
@@ -26,7 +26,6 @@ public class Table implements Roadblock {
         this.id = id;
 
         // Initialize paint for drawing the stall
-        paint = new Paint();
         paint.setColor(Color.WHITE); // Set the color of the stall to red
         paint.setStyle(Paint.Style.FILL); // Set the style to fill
 

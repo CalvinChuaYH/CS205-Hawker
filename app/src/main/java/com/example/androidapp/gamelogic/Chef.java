@@ -12,15 +12,10 @@ public class Chef implements Runnable {
     public void run() {
 
         while (true) {
-
-            buffer.putFood();
-//            try {
-//                // Simulate cooking time
-//                Thread.sleep(5000);
-//                buffer.putFood();
-//
-//            } catch (InterruptedException e) {
-//            }
+            try {
+                Thread.sleep(5000);
+                buffer.putFood();
+            } catch (InterruptedException e) {}
         }
     }
 }

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 
 import com.example.androidapp.R;
 
@@ -14,7 +12,7 @@ public class Food {
     private double topScreenY;
     private Bitmap image;
 
-    public Food(double centerScreenX, double topScreenY) {
+    public Food(Context context, double centerScreenX, double topScreenY) {
         this.centerScreenX = centerScreenX;
         this.topScreenY = topScreenY + 20;
 

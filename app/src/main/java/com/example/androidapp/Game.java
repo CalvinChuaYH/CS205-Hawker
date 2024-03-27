@@ -2,9 +2,6 @@ package com.example.androidapp;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -29,7 +26,6 @@ import com.example.androidapp.firebase.Firebase;
 import com.example.androidapp.firebase.FirebaseManager;
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
-import com.example.androidapp.gamelogic.Waiter;
 import com.example.androidapp.util.ThreadPool;
 
 import java.util.Locale;
@@ -53,7 +49,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private static final int THREAD_COUNT = 3;
 
     private Chef chef;
-    private Waiter waiter;
     Buffer buffer;
 
     public Game(AppCompatActivity activity) {
@@ -87,13 +82,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                 new Table(1500, 700, 90, 2),
                 new Table(800, 600, 90, 3)
         };
-        stall = new Stall(centerScreenX, topScreenY, buffer);
-        food = new Food(centerScreenX, topScreenY, 40);
+        stall = new Stall(getContext(), centerScreenX, topScreenY, buffer);
+        food = new Food(getContext(), centerScreenX, topScreenY);
         joystick = new Joystick(2000, 700,70,40);
         player = new Player(activity, 500, 500, 30);
         collisionHandler = new CollisionHandler(player, stall, tables);
 
-        this.waiter = new Waiter(player, stall);
         setFocusable(true);
     }
 
@@ -125,7 +119,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
         threadPool.execute(gameLoop);
         threadPool.execute(chef);
-        threadPool.execute(waiter);
     }
 
     @Override
@@ -149,7 +142,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
             table.draw(canvas);
         }
         joystick.draw(canvas);
-        collisionHandler.draw(canvas, joystick);
+        collisionHandler.draw(canvas);
         stall.draw(canvas);
 
         if (buffer.isFoodReady()) { // Check if the buffer says food is ready
@@ -179,13 +172,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void checkStopGame(){
         //If served 9 etc can stop game with this...
         if (collisionHandler.allCustomerServed()) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    gameLoop.setRunning(false);
-                    pauseTime = currentTime;
-                    showGameOverDialog();
-                }
+            activity.runOnUiThread(() -> {
+                gameLoop.setRunning(false);
+                pauseTime = currentTime;
+                showGameOverDialog();
             });
         }
     }
@@ -200,18 +190,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         new AlertDialog.Builder(activity)
                 .setTitle("Game Over")
                 .setView(dialogView)
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setCancelable(false)
+                .setPositiveButton("Submit", (dialogInterface, i) -> {
                         // Retrieve the input name and update the leaderboard
                         String playerName = playerNameInput.getText().toString();
                         updateLeaderboard(playerName);
 
                         // Optionally, navigate to the leaderboard screen
                         navigateToLeaderboard();
-                    }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Cancel", (dialogInterface, i) -> {
+                            navigateToLeaderboard();
+                        }
+                )
                 .show();
     }
 

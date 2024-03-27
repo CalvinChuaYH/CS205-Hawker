@@ -1,9 +1,9 @@
 package com.example.androidapp.App_Objects;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import com.example.androidapp.R;
 import com.example.androidapp.Joystick;
@@ -18,7 +18,7 @@ public class Stall implements Roadblock {
     private Buffer buffer;
 
     //Initialize stall and where it is
-    public Stall(int centerScreenX, int topScreenY, Buffer buffer) {
+    public Stall(Context context, int centerScreenX, int topScreenY, Buffer buffer) {
         this.centerX = centerScreenX;
         this.topY = topScreenY;
         this.buffer = buffer;
@@ -52,8 +52,9 @@ public class Stall implements Roadblock {
 
         // Check if the distance is less than or equal to the player's radius
         if (distance <= player.radius) {
-            double newX = player.positionX - joystick.getActuatorX() * player.MAX_SPEED;
-            double newY = player.positionY - joystick.getActuatorY() * player.MAX_SPEED;
+            double collisionAngle = Math.atan2(player.positionY - topY - height, player.positionX - centerX);
+            double newX = player.positionX + Math.cos(collisionAngle) * player.MAX_SPEED;
+            double newY = player.positionY + Math.sin(collisionAngle) * player.MAX_SPEED;
             if (buffer.isFoodReady()) {
                 buffer.takeFood();
                 player.setHasFood(true);
