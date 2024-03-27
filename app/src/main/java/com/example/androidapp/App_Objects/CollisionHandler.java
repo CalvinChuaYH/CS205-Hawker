@@ -23,8 +23,8 @@ public class CollisionHandler {
         initPeopleDB();
     }
 
-    public void draw(Canvas canvas, Joystick joystick){
-        player.draw(canvas, joystick);
+    public void draw(Canvas canvas){
+        player.draw(canvas);
     }
 
     public void update(Joystick joystick, int screenWidth, int screenHeight) {
@@ -85,7 +85,7 @@ public class CollisionHandler {
         int halfWidth = stall.width / 2;
 
         // Calculate the closest point on the stall to the player's center
-        double closestX = Math.max(Math.min(player.positionX, stall.centerX + halfWidth), stall.centerX - halfWidth);
+        double closestX = Math.max(Math.min(player.positionX, stall.centerX + halfWidth), stall.centerX - stall.width);
         double closestY = Math.max(Math.min(player.positionY, stall.topY + stall.height), stall.topY);
 
         // Calculate the distance between the player's center and the closest point on the stall

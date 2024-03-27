@@ -34,6 +34,7 @@ import com.example.androidapp.util.ThreadPool;
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
     private long currentTime;
+    private long pauseTime;
     private AppCompatActivity activity;
     private CollisionHandler collisionHandler;
     private final Player player;
@@ -131,7 +132,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        // Stop the game loop and associated threads
         gameLoop.setRunning(false);
+        threadPool.close(); // Properly shut down the thread pool
     }
 
     //Here you can come out with layout of the game etc items, person
@@ -143,7 +146,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
             table.draw(canvas);
         }
         joystick.draw(canvas);
-        collisionHandler.draw(canvas, joystick);
+        collisionHandler.draw(canvas);
         stall.draw(canvas);
 
         if (buffer.isFoodReady()) { // Check if the buffer says food is ready
@@ -177,6 +180,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                 @Override
                 public void run() {
                     gameLoop.setRunning(false);
+                    pauseTime = currentTime;
                     showGameOverDialog();
                 }
             });
@@ -210,7 +214,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     private void updateLeaderboard(String playerName) {
         Firebase firebase = FirebaseManager.getInstance();
-        firebase.setScore(playerName, (int) currentTime);
+        firebase.setScore(playerName, (int) pauseTime);
     }
 
     private void navigateToLeaderboard() {

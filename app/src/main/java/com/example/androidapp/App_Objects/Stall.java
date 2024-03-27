@@ -15,7 +15,7 @@ public class Stall {
     public int width;
     public int height;
     private Paint paint;
-    private Bitmap image;
+    public Bitmap image;
 
     //Initialize stall and where it is
     public Stall(Context context, int centerScreenX, int topScreenY) {
@@ -27,7 +27,7 @@ public class Stall {
         image = BitmapFactory.decodeResource(context.getResources(), R.drawable.table, options);
 
         this.width = image.getWidth(); // Set the width of the stall
-        this.height = image.getHeight(); // Set the height of the stall
+        this.height = image.getHeight() - 100; // Set the height of the stall
     }
 
     //Drawing my stall

@@ -59,29 +59,7 @@ public class Player {
     }
 
     // Drawing the player on canvas
-    public void draw(Canvas canvas, Joystick joystick) {
-//        // Head
-//        canvas.drawCircle((float) positionX, (float) positionY, (float) radius, paint);
-//
-//        // Body
-//        canvas.drawRect((float) (positionX - radius / 2), (float) (positionY + radius),
-//                (float) (positionX + radius / 2), (float) (positionY + 3 * radius), paint);
-//
-//        // Check joystick input to determine direction of rectangle
-//        if (joystick.getActuatorX() < 0) {
-//            canvas.drawRect((float) (positionX - 2 * radius), (float) (positionY + radius),
-//                    (float) (positionX - radius / 2), (float) (positionY + 2 * radius), paint);
-//        } else if (joystick.getActuatorX() > 0) {
-//            canvas.drawRect((float) (positionX + radius / 2), (float) (positionY + radius),
-//                    (float) (positionX + 2 * radius), (float) (positionY + 2 * radius), paint);
-//        }
-//
-//        // Legs
-//        canvas.drawRect((float) (positionX - radius / 2), (float) (positionY + 3 * radius),
-//                (float) (positionX - radius / 4), (float) (positionY + 5 * radius), paint);
-//        canvas.drawRect((float) (positionX + radius / 4), (float) (positionY + 3 * radius),
-//                (float) (positionX + radius / 2), (float) (positionY + 5 * radius), paint)
-
+    public void draw(Canvas canvas) {
         canvas.drawBitmap(image, (float) positionX, (float) positionY, paint);
     }
 
