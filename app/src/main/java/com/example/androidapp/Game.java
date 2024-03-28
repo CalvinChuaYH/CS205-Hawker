@@ -142,7 +142,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
             table.draw(canvas);
         }
         joystick.draw(canvas);
-        collisionHandler.draw(canvas);
+        collisionHandler.draw(canvas, joystick);
         stall.draw(canvas);
 
         if (buffer.isFoodReady()) { // Check if the buffer says food is ready

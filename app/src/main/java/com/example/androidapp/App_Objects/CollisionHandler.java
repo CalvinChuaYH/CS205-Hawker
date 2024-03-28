@@ -21,8 +21,8 @@ public class CollisionHandler {
         this.vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    public void draw(Canvas canvas){
-        player.draw(canvas);
+    public void draw(Canvas canvas, Joystick joystick){
+        player.draw(canvas, joystick);
     }
 
     public void update(Joystick joystick, int screenWidth, int screenHeight) {
