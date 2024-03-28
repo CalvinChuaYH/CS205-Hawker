@@ -2,8 +2,9 @@ package com.example.androidapp.App_Objects;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.os.Vibrator;
+import android.os.CombinedVibration;
 import android.os.VibrationEffect;
+import android.os.VibratorManager;
 
 import com.example.androidapp.Joystick;
 
@@ -12,13 +13,13 @@ import java.util.*;
 public class CollisionHandler {
     private final Player player;
     private final List<Roadblock> blocks = new ArrayList<>();
-    private Vibrator vibrator;
+    private final VibratorManager vibrator;
 
     public CollisionHandler(Context context,Player player, Stall stall, Table[] tables){
         this.player = player;
         blocks.add(stall);
         blocks.addAll(Arrays.asList(tables));
-        this.vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        this.vibrator = (VibratorManager) context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
     }
 
     public void draw(Canvas canvas, Joystick joystick){
@@ -37,7 +38,9 @@ public class CollisionHandler {
                 newY = coords[1];
 
                 // Vibrate for 10ms when player hits the table
-                vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                VibrationEffect effect = VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE);
+                vibrator.vibrate(CombinedVibration.createParallel(effect));
+
                 break;
             }
         }
