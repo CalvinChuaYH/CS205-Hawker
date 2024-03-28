@@ -86,7 +86,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         food = new Food(getContext(), centerScreenX, topScreenY);
         joystick = new Joystick(2000, 700,70,40);
         player = new Player(activity, 500, 500, 30);
-        collisionHandler = new CollisionHandler(player, stall, tables);
+        collisionHandler = new CollisionHandler(getContext(),player, stall, tables);
 
         setFocusable(true);
     }
@@ -142,7 +142,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
             table.draw(canvas);
         }
         joystick.draw(canvas);
-        collisionHandler.draw(canvas);
+        collisionHandler.draw(canvas, joystick);
         stall.draw(canvas);
 
         if (buffer.isFoodReady()) { // Check if the buffer says food is ready
