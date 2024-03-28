@@ -1,6 +1,9 @@
 package com.example.androidapp.App_Objects;
 
+import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 
 import com.example.androidapp.Joystick;
 import com.example.androidapp.gamelogic.Buffer;
@@ -15,11 +18,13 @@ public class CollisionHandler {
     private Stall stall;
     private Table[] tables;
     private Buffer buffer;
-    public CollisionHandler(Player player, Stall stall, Table[] tables, Buffer buffer){
+    private Vibrator vibrator;
+    public CollisionHandler(Context context, Player player, Stall stall, Table[] tables, Buffer buffer){
         this.player = player;
         this.stall = stall;
         this.tables = tables;
         this.buffer = buffer;
+        this.vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         initPeopleDB();
     }
 
@@ -41,6 +46,10 @@ public class CollisionHandler {
                 double collisionAngle = Math.atan2(player.positionY - table.centerY, player.positionX - table.centerX);
                 newX = player.positionX + Math.cos(collisionAngle) * player.MAX_SPEED;
                 newY = player.positionY + Math.sin(collisionAngle) * player.MAX_SPEED;
+
+                // Vibrate for 10ms when player hits the table
+                vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+
                 break;
             }
         }
@@ -60,6 +69,9 @@ public class CollisionHandler {
             if (buffer.isFoodReady()) {
                 player.setHasFood(true);
             }
+
+            // Vibrate for 10ms when player hits the stall.
+            vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
         }
     }
 
