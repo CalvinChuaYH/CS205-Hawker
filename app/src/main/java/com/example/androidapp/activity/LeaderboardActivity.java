@@ -25,9 +25,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     }
 
     public void viewHome(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-//        getOnBackPressedDispatcher().onBackPressed();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }

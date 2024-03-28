@@ -1,22 +1,6 @@
 package com.example.androidapp.gamelogic;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-
-import androidx.core.content.ContextCompat;
-
-import com.example.androidapp.Game;
-import com.example.androidapp.R;
-
 public class Buffer {
-
-    private Game game;
-
-    public Buffer(Game game) {
-        this.game = game;
-    }
-
     private boolean isFull = false;
 
     public synchronized void putFood() {
@@ -25,10 +9,6 @@ public class Buffer {
                 wait();
             } catch (InterruptedException e) {}
         }
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {}
 
         System.out.println("Chef prepared food");
         isFull = true;

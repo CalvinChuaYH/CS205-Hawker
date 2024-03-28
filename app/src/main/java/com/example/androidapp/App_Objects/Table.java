@@ -1,38 +1,41 @@
 package com.example.androidapp.App_Objects;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-public class Table {
+import com.example.androidapp.Joystick;
+
+import java.util.ArrayList;
+
+public class Table implements Roadblock {
     public int centerX;
     public int centerY; // Add centerY for the circle
     public int radius; // Add radius for the circle
-    private Paint paint;
+    private final Paint paint = new Paint();
     public int id;
 
-    public Customer[] customers; // Array of customers
+    public ArrayList<Customer> customers; // Array of customers
+    public final int customerNum = 3;
 
     //Initialize stall and where it is
-    public Table(Context context, int X, int Y, int radius, int id) {
+    public Table(int X, int Y, int radius, int id) {
         this.centerX = X;
         this.centerY = Y;
         this.radius = radius;
         this.id = id;
 
         // Initialize paint for drawing the stall
-        paint = new Paint();
         paint.setColor(Color.WHITE); // Set the color of the stall to red
         paint.setStyle(Paint.Style.FILL); // Set the style to fill
 
-        customers = new Customer[3]; // Initialize the array for 3 customers
+        customers = new ArrayList<>(); // Initialize the array for 3 customers
         // Creating customer objects and placing them in seats
-        for (int i = 0; i < customers.length; i++) {
-            double angle = (2 * Math.PI / customers.length) * i; // Angle for each seat
+        for (int i = 0; i < customerNum; i++) {
+            double angle = (2 * Math.PI / customerNum) * i; // Angle for each seat
             int seatX = (int) (centerX + radius * Math.cos(angle)); // X-coordinate of the seat
             int seatY = (int) (centerY + radius * Math.sin(angle)); // Y-coordinate of the seat
-            customers[i] = new Customer(seatX, seatY); // Create customer and assign position
+            customers.add(new Customer(seatX, seatY)); // Create customer and assign position
         }
 
     }
@@ -43,9 +46,8 @@ public class Table {
         canvas.drawCircle(centerX, centerY, radius, paint);
 
         // Draw seats around the circumference of the table
-        int numSeats = 3; // Number of seats
-        for (int i = 0; i < numSeats; i++) {
-            double angle = (2 * Math.PI / numSeats) * i; // Angle for each seat
+        for (int i = 0; i < customerNum; i++) {
+            double angle = (2 * Math.PI / customerNum) * i; // Angle for each seat
             int seatX = (int) (centerX + radius * Math.cos(angle)); // X-coordinate of the seat
             int seatY = (int) (centerY + radius * Math.sin(angle)); // Y-coordinate of the seat
             canvas.drawCircle(seatX, seatY, 20, paint); // Draw the seat as a small circle
@@ -53,22 +55,39 @@ public class Table {
 
         // Draw customers sitting in the seats
         for (Customer customer : customers) {
-            if (customer != null) {
-                customer.draw(canvas); // Draw each customer
-            }
+            customer.draw(canvas); // Draw each customer
         }
     }
 
     // Method to remove a customer from the table
     public void removeCustomer(int index) {
-        if (index >= 0 && index < customers.length) {
-            customers[index] = null; // Remove the customer at the specified index
-        }
+        customers.remove(index);
     }
 
-    public static void removeCustomerFromTable(Table table, int index) {
-        if (table != null) {
-            table.removeCustomer(index); // Call the removeCustomer method of the specified table
+    @Override
+    public double[] handleCollide(Player player, Joystick joystick) {
+        // Calculate the distance between the player's center and the table's center
+        int adj = 50;
+        double distanceX = player.positionX - centerX;
+        double distanceY = player.positionY - centerY + adj;
+        double distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+        // Check if the distance is less than or equal to the sum of player's radius and table's radius
+        if (distance <= (player.radius + radius + adj)) {
+            // If colliding with a table, adjust the new position
+            double collisionAngle = Math.atan2(player.positionY - centerY, player.positionX - centerX);
+            double newX = player.positionX + Math.cos(collisionAngle) * player.MAX_SPEED;
+            double newY = player.positionY + Math.sin(collisionAngle) * player.MAX_SPEED;
+
+            if (player.getHasFood() && !customers.isEmpty()) {
+                //Handles player disappearing logic
+                player.increaseServed();
+                removeCustomer(0); //remove the customer
+            }
+
+            return new double[] {newX, newY};
         }
+
+        return null;
     }
 }

@@ -13,7 +13,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Game game = new Game(this, this);
+        Game game = new Game(this);
         setContentView(game);
     }
 }

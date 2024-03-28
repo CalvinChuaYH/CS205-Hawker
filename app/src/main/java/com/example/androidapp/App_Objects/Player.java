@@ -14,10 +14,6 @@ import androidx.core.content.ContextCompat;
 import com.example.androidapp.GameLoop;
 import com.example.androidapp.Joystick;
 import com.example.androidapp.R;
-import com.example.androidapp.gamelogic.Buffer;
-
-import java.util.HashMap;
-import java.util.Stack;
 
 public class Player {
     public final double SPEED_PIXELS_PER_SEC = 400.0;
@@ -25,6 +21,7 @@ public class Player {
     public double positionX;
     public double positionY;
     public double radius;
+    public int served = 0;
     private final Paint paint = new Paint();
 
     private boolean hasFood = false;
@@ -66,5 +63,12 @@ public class Player {
     public boolean getHasFood(){
         return hasFood;
     }
+
+    public void increaseServed() {
+        setHasFood(false);
+        served++;
+    }
+
+    public int getServed() {return served;}
 
 }

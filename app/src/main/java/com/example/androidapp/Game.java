@@ -2,8 +2,6 @@ package com.example.androidapp;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -28,8 +26,9 @@ import com.example.androidapp.firebase.Firebase;
 import com.example.androidapp.firebase.FirebaseManager;
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
-import com.example.androidapp.gamelogic.Waiter;
 import com.example.androidapp.util.ThreadPool;
+
+import java.util.Locale;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long start;
@@ -50,11 +49,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private static final int THREAD_COUNT = 3;
 
     private Chef chef;
-    private Waiter waiter;
     Buffer buffer;
 
-    public Game(Context context, AppCompatActivity activity) {
-        super(context);
+    public Game(AppCompatActivity activity) {
+        super(activity);
         this.activity = activity;
         // Initialize threadpool
         this.threadPool = ThreadPool.getInstance(THREAD_COUNT);
@@ -67,30 +65,29 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         start = System.currentTimeMillis()/1000L;
 
         // Initialize chef thread
-        buffer = new Buffer(this);
+        buffer = new Buffer();
         this.chef = new Chef(buffer);
 
 
         //initialize Objects
 
         // Calculate center of the screen
-        int screenWidth = ScreenUtils.getScreenWidth(getContext());
+        int screenWidth = ScreenUtils.getScreenWidth(activity);
         int centerScreenX = screenWidth / 2;
         int topScreenY = 0;
 
         // Place the stall at the top center of the screen
         tables = new Table[]{
-                new Table(getContext(), 200, 400, 90, 1),
-                new Table(getContext(), 1500, 700, 90, 2),
-                new Table(getContext(), 800, 600, 90, 3)
+                new Table(200, 400, 90, 1),
+                new Table(1500, 700, 90, 2),
+                new Table(800, 600, 90, 3)
         };
-        stall = new Stall(getContext(), centerScreenX, topScreenY);
+        stall = new Stall(getContext(), centerScreenX, topScreenY, buffer);
         food = new Food(getContext(), centerScreenX, topScreenY);
         joystick = new Joystick(2000, 700,70,40);
-        player = new Player(getContext(), 500, 500, 30);
-        collisionHandler = new CollisionHandler(player, stall, tables, buffer);
+        player = new Player(activity, 500, 500, 30);
+        collisionHandler = new CollisionHandler(player, stall, tables);
 
-        this.waiter = new Waiter(buffer, collisionHandler);
         setFocusable(true);
     }
 
@@ -122,7 +119,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
         threadPool.execute(gameLoop);
         threadPool.execute(chef);
-        threadPool.execute(waiter);
     }
 
     @Override
@@ -161,7 +157,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         int color = ContextCompat.getColor(getContext(), R.color.magenta);
         paint.setColor(color);
         paint.setTextSize(50);
-        canvas.drawText((currentTime / 60) + " : " + (currentTime % 60) , 100, 100, paint);
+        canvas.drawText(String.format(Locale.ENGLISH, "%d:%02d", (currentTime / 60), (currentTime % 60)), 100, 100, paint);
     }
 
     //Responsible to handle updates, when you move joystick and player movements of the game.
@@ -176,13 +172,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void checkStopGame(){
         //If served 9 etc can stop game with this...
         if (collisionHandler.allCustomerServed()) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    gameLoop.setRunning(false);
-                    pauseTime = currentTime;
-                    showGameOverDialog();
-                }
+            activity.runOnUiThread(() -> {
+                gameLoop.setRunning(false);
+                pauseTime = currentTime;
+                showGameOverDialog();
             });
         }
     }
@@ -197,18 +190,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         new AlertDialog.Builder(activity)
                 .setTitle("Game Over")
                 .setView(dialogView)
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setCancelable(false)
+                .setPositiveButton("Submit", (dialogInterface, i) -> {
                         // Retrieve the input name and update the leaderboard
                         String playerName = playerNameInput.getText().toString();
                         updateLeaderboard(playerName);
 
                         // Optionally, navigate to the leaderboard screen
                         navigateToLeaderboard();
-                    }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Cancel", (dialogInterface, i) -> {
+                            navigateToLeaderboard();
+                        }
+                )
                 .show();
     }
 
