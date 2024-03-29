@@ -9,7 +9,7 @@ public class Buffer {
                 wait();
             } catch (InterruptedException e) {}
         }
-
+        simulateTime(2000);
         System.out.println("Chef prepared food");
         isFull = true;
         notifyAll();
@@ -29,5 +29,13 @@ public class Buffer {
 
     public boolean isFoodReady() {
         return isFull;
+    }
+
+    public void simulateTime(int time) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -27,6 +27,7 @@ import com.example.androidapp.firebase.FirebaseManager;
 import com.example.androidapp.gamelogic.Buffer;
 import com.example.androidapp.gamelogic.Chef;
 import com.example.androidapp.util.ThreadPool;
+import com.google.firebase.annotations.concurrent.Background;
 
 import java.util.Locale;
 
@@ -35,6 +36,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private long currentTime;
     private long pauseTime;
     private AppCompatActivity activity;
+    private BackGround backGround;
     private CollisionHandler collisionHandler;
     private final Player player;
     private GameLoop gameLoop;
@@ -75,6 +77,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         int screenWidth = ScreenUtils.getScreenWidth(activity);
         int centerScreenX = screenWidth / 2;
         int topScreenY = 0;
+
+        backGround = new BackGround(getContext());
 
         // Place the stall at the top center of the screen
         tables = new Table[]{
@@ -137,6 +141,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        backGround.draw(canvas);
         stopWatch(canvas);
         for (Table table : tables) {
             table.draw(canvas);

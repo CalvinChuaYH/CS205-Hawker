@@ -26,7 +26,7 @@ public class Table implements Roadblock {
         this.id = id;
 
         // Initialize paint for drawing the stall
-        paint.setColor(Color.WHITE); // Set the color of the stall to red
+        paint.setColor(Color.rgb(255, 165, 0)); // Set the color of the stall to orange
         paint.setStyle(Paint.Style.FILL); // Set the style to fill
 
         customers = new ArrayList<>(); // Initialize the array for 3 customers

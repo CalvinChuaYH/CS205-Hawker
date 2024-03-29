@@ -10,12 +10,8 @@ public class Chef implements Runnable {
 
     @Override
     public void run() {
-
         while (true) {
-            try {
-                Thread.sleep(5000);
-                buffer.putFood();
-            } catch (InterruptedException e) {}
+            buffer.putFood();
         }
     }
 }
